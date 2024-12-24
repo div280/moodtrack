@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: auto; padding: 20px; text-align: center; }
+        input, textarea, button { display: block; width: 100%; margin: 10px 0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mood Tracker</h1>
+        <p>Log your mood and receive a motivational message or a joke!</p>
+        <form id="mood-form">
+            <input type="text" id="mood" placeholder="Your Mood (e.g., happy, sad)" required />
+            <textarea id="reason" placeholder="Reason for your mood"></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div>
+    </div>
+    <script>
+        document.getElementById('mood-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const mood = document.getElementById('mood').value;
+            const reason = document.getElementById('reason').value;
+
+            const response = await fetch('/api/log-mood', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mood, reason }),
+            });
+
+            const data = await response.json();
+            document.getElementById('response').innerHTML = `
+                <p><strong>${data.message}</strong></p>
+                <p>Motivational Message: ${data.motivation || 'None'}</p>
+                <p>Joke/Fun Fact: ${data.joke_or_fact}</p>
+            `;
+        });
+    </script>
+</body>
+</html>
